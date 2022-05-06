@@ -346,6 +346,29 @@ function buildCategoryPageHead(html, requestPath, categoryMeta) {
   return insertToHead(html, categoryPageMetadata);
 }
 
+async function fetchLatestClaimOrRedirect(ctx, url, ignoreRedirect = false) {
+  let claim;
+  const searchOptions = {
+    limit_claims_per_channel: 1,
+    channel: url,
+    no_totals: true,
+    order_by: ['release_time'],
+    page: 1,
+  };
+  try {
+    const response = await Lbry.claim_search(searchOptions);
+    if (response && response[url] && !response[url].error) {
+      claim = response && response[url];
+      const isRepost = claim.reposted_claim && claim.reposted_claim.name && claim.reposted_claim.claim_id;
+      if (isRepost && !ignoreRedirect) {
+        ctx.redirect(`/${claim.reposted_claim.name}:${claim.reposted_claim.claim_id}`);
+        return;
+      }
+    }
+  } catch {}
+  return claim;
+}
+
 async function resolveClaimOrRedirect(ctx, url, ignoreRedirect = false) {
   let claim;
   try {
@@ -410,8 +433,17 @@ async function getHtml(ctx) {
   }
 
   if (requestPath.includes(embedPath)) {
-    const claimUri = normalizeClaimUrl(requestPath.replace(embedPath, '').replace('/', '#'));
-    const claim = await resolveClaimOrRedirect(ctx, claimUri, true);
+    let claimUri = requestPath.replace(embedPath, '');
+    let claim;
+    if (claimUri.includes(`feature=${PAGES.LIVE_NOW}`) || claimUri.includes(`feature=${PAGES.LATEST}`)) {
+      claimUri = normalizeClaimUrl(
+        claimUri.substring(0, claimUri.indexOf('?') > 0 ? claimUri.indexOf('?') : claimUri.length)
+      );
+      claim = await fetchLatestClaimOrRedirect(ctx, claimUri, true);
+    } else {
+      claimUri = normalizeClaimUrl(claimUri.replace('/', '#'));
+      claim = await resolveClaimOrRedirect(ctx, claimUri, true);
+    }
 
     if (claim) {
       const ogMetadata = buildClaimOgMetadata(claimUri, claim);
