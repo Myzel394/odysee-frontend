@@ -95,11 +95,11 @@ export default function RecommendedPersonal(props: Props) {
     return (
       <>
         {header}
-        <ul className="claim-grid">
+        <div className="claim-grid">
           {new Array(countCollapsed).fill(1).map((x, i) => (
             <ClaimPreviewTile key={i} placeholder />
           ))}
-        </ul>
+        </div>
         <div className="livestream-list--view-more" style={{ visibility: 'hidden' }}>
           <Button
             label='"View More" dummy to reduce layout shift'

@@ -1,6 +1,5 @@
 // @flow
 import React, { useRef } from 'react';
-import classnames from 'classnames';
 import { DOMAIN, SIMPLE_SITE } from 'config';
 import * as ICONS from 'constants/icons';
 import * as PAGES from 'constants/pages';
@@ -65,7 +64,6 @@ function DiscoverPage(props: Props) {
   const tagsQuery = urlParams.get('t') || null;
   const tags = tagsQuery ? tagsQuery.split(',') : null;
   const repostedClaimIsResolved = repostedUri && repostedClaim;
-  const hideRepostRibbon = isCategory && !isWildWest;
 
   // Eventually allow more than one tag on this page
   // Restricting to one to make follow/unfollow simpler
@@ -193,11 +191,7 @@ function DiscoverPage(props: Props) {
   }
 
   return (
-    <Page
-      noFooter
-      fullWidthPage={tileLayout}
-      className={classnames('main__discover', { 'hide-ribbon': hideRepostRibbon })}
-    >
+    <Page noFooter fullWidthPage={tileLayout} className="main__discover">
       <ClaimSearchFilterContext.Provider value={filters}>
         <ClaimListDiscover
           pins={getPins(dynamicRouteProps)}

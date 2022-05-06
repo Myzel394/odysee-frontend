@@ -115,7 +115,7 @@ function CollectionPreviewTile(props: Props) {
 
   if (isResolvingUri || isResolvingCollectionClaims) {
     return (
-      <li
+      <div
         className={classnames('claim-preview--tile', {
           'swipe-list__item claim-preview--horizontal-tile': swipeLayout,
         })}
@@ -125,7 +125,7 @@ function CollectionPreviewTile(props: Props) {
           <div className="placeholder claim-tile__title" />
           <div className="placeholder claim-tile__info" />
         </div>
-      </li>
+      </div>
     );
   }
 
@@ -134,7 +134,7 @@ function CollectionPreviewTile(props: Props) {
   }
 
   return (
-    <li
+    <div
       role="link"
       onClick={handleClick}
       className={classnames('card claim-preview--tile', {
@@ -165,7 +165,7 @@ function CollectionPreviewTile(props: Props) {
           </React.Fragment>
         </div>
       </div>
-    </li>
+    </div>
   );
 }
 

@@ -115,16 +115,22 @@ export default function ClaimList(props: Props) {
   // anything if the search failed or timed out.
   const timedOut = uris === null;
   const urisLength = (uris && uris.length) || 0;
+  // console.log('urisLength: ', urisLength)
 
   let tileUris = (prefixUris || []).concat(uris || []);
 
   if (prefixUris && prefixUris.length) tileUris.splice(prefixUris.length * -1, prefixUris.length);
 
   const totalLength = tileUris.length;
+  // console.log('totalLength: ', totalLength)
 
   if (maxClaimRender) tileUris = tileUris.slice(0, maxClaimRender);
+  if (maxClaimRender) console.log('maxClaimRender: ', maxClaimRender);
 
   const sortedUris = (urisLength > 0 && (currentSort === SORT_NEW ? tileUris : tileUris.slice().reverse())) || [];
+  // console.log('sortedUris: ', sortedUris.length)
+
+  if (pageSize) console.log('pageSize: ', pageSize);
 
   React.useEffect(() => {
     if (typeof loadedCallback === 'function') loadedCallback(totalLength);
@@ -226,7 +232,7 @@ export default function ClaimList(props: Props) {
 
   return tileLayout && !header ? (
     <>
-      <section ref={listRef} className={classnames('claim-grid', { 'swipe-list': swipeLayout })}>
+      <section ref={listRef} className={classnames('claim-grid claim-grid-4-rows', { 'swipe-list': swipeLayout })}>
         {urisLength > 0 &&
           tileUris.map((uri, index) => (
             <React.Fragment key={uri}>

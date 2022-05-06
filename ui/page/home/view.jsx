@@ -17,7 +17,6 @@ import { GetLinksData } from 'util/buildHomepage';
 import { getLivestreamUris } from 'util/livestream';
 import ScheduledStreams from 'component/scheduledStreams';
 import { splitBySeparator } from 'util/lbryURI';
-import classnames from 'classnames';
 import Ads from 'web/component/ads';
 import Meme from 'web/component/meme';
 
@@ -146,11 +145,11 @@ function HomePage(props: Props) {
 
   function getRowElements(id, title, route, link, icon, help, options, index, pinUrls, pinnedClaimIds) {
     const tilePlaceholder = (
-      <ul className="claim-grid">
+      <div className="claim-grid">
         {new Array(options.pageSize || 8).fill(1).map((x, i) => (
           <ClaimPreviewTile showNoSourceClaims={ENABLE_NO_SOURCE_CLAIMS} key={i} placeholder />
         ))}
-      </ul>
+      </div>
     );
 
     const claimTiles = (
@@ -163,7 +162,8 @@ function HomePage(props: Props) {
         injectedItem={
           index === 0 && {
             node: <Ads small type="video" tileLayout />,
-            replace: adBlockerFound === false && isLargeScreen,
+            // replace: adBlockerFound === false && isLargeScreen,
+            replace: adBlockerFound === false,
           }
         }
         forceShowReposts={id !== 'FOLLOWING'}
@@ -188,12 +188,7 @@ function HomePage(props: Props) {
     };
 
     return (
-      <div
-        key={title}
-        className={classnames('claim-grid__wrapper', {
-          'hide-ribbon': link !== `/$/${PAGES.CHANNELS_FOLLOWING}`,
-        })}
-      >
+      <div key={title} className="claim-grid__wrapper">
         {id === 'FYP' ? (
           <RecommendedPersonal header={<HeaderArea />} />
         ) : (

@@ -170,7 +170,7 @@ function ClaimPreviewTile(props: Props) {
 
   if (placeholder || (!claim && isResolvingUri)) {
     return (
-      <li
+      <div
         className={classnames('placeholder claim-preview--tile', {
           'swipe-list__item claim-preview--horizontal-tile': swipeLayout,
         })}
@@ -193,7 +193,7 @@ function ClaimPreviewTile(props: Props) {
             </div>
           </div>
         </div>
-      </li>
+      </div>
     );
   }
 
@@ -211,7 +211,7 @@ function ClaimPreviewTile(props: Props) {
   }
 
   return (
-    <li
+    <div
       onClick={handleClick}
       className={classnames('card claim-preview--tile', {
         'claim-preview__wrapper--channel': isChannel,
@@ -298,7 +298,7 @@ function ClaimPreviewTile(props: Props) {
           </div>
         )}
       </div>
-    </li>
+    </div>
   );
 }
 

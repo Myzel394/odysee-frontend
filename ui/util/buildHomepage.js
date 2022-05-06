@@ -100,6 +100,7 @@ export const getHomepageRowForCat = (key: string, cat: HomepageCat) => {
       excludedChannelIds: cat.excludedChannelIds,
       orderBy: orderValue,
       pageSize: cat.pageSize || undefined,
+      rows: 2,
       limitClaimsPerChannel: limitClaims,
       searchLanguages: cat.searchLanguages,
       releaseTime: `>${Math.floor(
@@ -124,9 +125,11 @@ export function GetLinksData(
   showIndividualTags?: boolean,
   showNsfw?: boolean
 ) {
+  /*
   function getPageSize(originalSize) {
     return isLargeScreen ? originalSize * (3 / 2) : originalSize;
   }
+  */
 
   // $FlowFixMe
   let rowData: Array<RowDataItem> = [];
@@ -144,7 +147,10 @@ export function GetLinksData(
           subscribedChannels.length > 20
             ? `>${Math.floor(moment().subtract(9, 'months').startOf('week').unix())}`
             : `>${Math.floor(moment().subtract(1, 'year').startOf('week').unix())}`,
-        pageSize: getPageSize(subscribedChannels.length > 3 ? (subscribedChannels.length > 6 ? 12 : 8) : 4),
+        // pageSize: getPageSize(subscribedChannels.length > 3 ? (subscribedChannels.length > 6 ? 12 : 8) : 4),
+        // pageSize: getPageSize(subscribedChannels.length > 3 ? (subscribedChannels.length > 8 ? 14 : 10) : 6),
+        pageSize: 99,
+        rows: 3,
         streamTypes: null,
         channelIds: subscribedChannels.map((subscription: Subscription) => {
           const { channelClaimId } = parseURI(subscription.uri);
@@ -251,7 +257,8 @@ export function GetLinksData(
     options: {
       claimType: ['stream'],
       orderBy: ['release_time'],
-      pageSize: getPageSize(12),
+      // pageSize: getPageSize(12),
+      rows: 2,
       channelIds: YOUTUBER_CHANNEL_IDS,
       limitClaimsPerChannel: 1,
       releaseTime: `>${Math.floor(moment().subtract(1, 'months').startOf('week').unix())}`,
@@ -262,7 +269,8 @@ export function GetLinksData(
     title: __('Top Content from Today'),
     link: `/$/${PAGES.DISCOVER}?${CS.ORDER_BY_KEY}=${CS.ORDER_BY_TOP}&${CS.FRESH_KEY}=${CS.FRESH_DAY}`,
     options: {
-      pageSize: getPageSize(showPersonalizedChannels || showPersonalizedTags ? 4 : 8),
+      // pageSize: getPageSize(showPersonalizedChannels || showPersonalizedTags ? 4 : 8),
+      rows: 2,
       orderBy: ['effective_amount'],
       claimType: ['stream'],
       limitClaimsPerChannel: 2,
@@ -284,7 +292,8 @@ export function GetLinksData(
     link: `/@lbry:3f`,
     options: {
       orderBy: ['release_time'],
-      pageSize: getPageSize(4),
+      // pageSize: getPageSize(4),
+      rows: 2,
       channelIds: ['3fda836a92faaceedfe398225fb9b2ee2ed1f01a'],
     },
   };
@@ -297,7 +306,8 @@ export function GetLinksData(
         icon: ICONS.TAG,
 
         options: {
-          pageSize: getPageSize(4),
+          // pageSize: getPageSize(4),
+          rows: 2,
           tags: followedTags.map((tag) => tag.name),
           claimType: ['stream'],
           limitClaimsPerChannel: 2,
@@ -311,6 +321,7 @@ export function GetLinksData(
           link: `/$/${PAGES.DISCOVER}?t=${tag.name}`,
           options: {
             pageSize: 4,
+            rows: 2,
             tags: [tag.name],
             claimType: ['stream'],
           },

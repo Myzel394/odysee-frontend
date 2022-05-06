@@ -8,6 +8,7 @@ import useFetchViewCount from 'effects/use-fetch-view-count';
 import useGetLastVisibleSlot from 'effects/use-get-last-visible-slot';
 import useResolvePins from 'effects/use-resolve-pins';
 import useGetUserMemberships from 'effects/use-get-user-memberships';
+import classnames from 'classnames';
 
 const SHOW_TIMEOUT_MSG = false;
 
@@ -67,6 +68,7 @@ type Props = {
   doFetchUserMemberships: (claimIdCsv: string) => void,
   doResolveClaimIds: (Array<string>) => Promise<any>,
   doResolveUris: (Array<string>, boolean) => Promise<any>,
+  rows?: number,
 };
 
 function ClaimTilesDiscover(props: Props) {
@@ -90,6 +92,7 @@ function ClaimTilesDiscover(props: Props) {
     doFetchUserMemberships,
     doResolveClaimIds,
     doResolveUris,
+    rows,
   } = props;
 
   const listRef = React.useRef();
@@ -105,17 +108,19 @@ function ClaimTilesDiscover(props: Props) {
   const shouldPerformSearch = !fetchingClaimSearch && !timedOut && claimSearchUris.length === 0;
 
   const uris = (prefixUris || []).concat(claimSearchUris);
-  if (prefixUris && prefixUris.length) uris.splice(prefixUris.length * -1, prefixUris.length);
+  // if (prefixUris && prefixUris.length) uris.splice(prefixUris.length * -1, prefixUris.length);
 
   if (window.location.pathname === '/') {
     injectPinUrls(uris, pins, resolvedPinUris);
   }
 
+  /*
   if (uris.length > 0 && uris.length < pageSize && shouldPerformSearch) {
     // prefixUri and pinUrls might already be present while waiting for the
     // remaining claim_search results. Fill the space to prevent layout shifts.
     uris.push(...Array(pageSize - uris.length).fill(''));
   }
+  */
 
   // Show previous results while we fetch to avoid blinkies and poor CLS.
   const finalUris = isUnfetchedClaimSearch && prevUris.current ? prevUris.current : uris;
@@ -198,8 +203,16 @@ function ClaimTilesDiscover(props: Props) {
     );
   }
 
+  console.log('Width: ', window.innerWidth);
+  console.log('rows: ', rows);
   return (
-    <ul ref={listRef} className="claim-grid">
+    <div
+      ref={listRef}
+      className={classnames('claim-grid', {
+        'claim-grid-2-rows': rows === 2,
+        'claim-grid-3-rows': rows === 3,
+      })}
+    >
       {finalUris && finalUris.length
         ? finalUris.map((uri, i) => {
             if (uri) {
@@ -225,7 +238,7 @@ function ClaimTilesDiscover(props: Props) {
             .map((x, i) => (
               <ClaimPreviewTile showNoSourceClaims={hasNoSource || showNoSourceClaims} key={i} placeholder />
             ))}
-    </ul>
+    </div>
   );
 }
 

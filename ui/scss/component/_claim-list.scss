@@ -802,11 +802,106 @@
 // A grid of tiles
 // It should probably go into it's own file once we add more to it
 //
-.claim-grid {
+/*
+.claim-grid {  
   display: flex;
   flex-wrap: wrap;
   list-style: none;
   align-items: flex-start;
+}
+*/
+
+.claim-grid {
+  display: grid;
+  column-gap: 10px;
+  row-gap: 10px;
+
+  &.claim-grid-2-rows {
+    @media (max-width: $breakpoint-small) {
+    }
+    // + 900
+    @media (min-width: $breakpoint-small) and (max-width: $breakpoint-medium) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-rows: repeat(1, 1fr);
+      & > .claim-preview--tile:nth-child(n + 13) {
+        display: none;
+      }
+    }
+    // + 1150
+    @media (min-width: $breakpoint-medium) and (max-width: $breakpoint-large) {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-rows: repeat(1, 1fr);
+      & > .claim-preview--tile:nth-child(n + 13) {
+        display: none;
+      }
+    }
+    // + 1600
+    @media (min-width: $breakpoint-large) {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      grid-template-rows: repeat(1, 1fr);
+      & > .claim-preview--tile:nth-child(n + 13) {
+        display: none;
+      }
+    }
+  }
+
+  &.claim-grid-3-rows {
+    @media (max-width: $breakpoint-small) {
+    }
+    // + 900
+    @media (min-width: $breakpoint-small) and (max-width: $breakpoint-medium) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-rows: repeat(2, 1fr);
+      & > .claim-preview--tile:nth-child(n + 13) {
+        display: none;
+      }
+    }
+    // + 1150
+    @media (min-width: $breakpoint-medium) and (max-width: $breakpoint-large) {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-rows: repeat(2, 1fr);
+      & > .claim-preview--tile:nth-child(n + 13) {
+        display: none;
+      }
+    }
+    // + 1600
+    @media (min-width: $breakpoint-large) {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      grid-template-rows: repeat(3, 1fr);
+      & > .claim-preview--tile:nth-child(n + 19) {
+        display: none;
+      }
+    }
+  }
+
+  &.claim-grid-4-rows {
+    @media (max-width: $breakpoint-small) {
+    }
+    // + 900
+    @media (min-width: $breakpoint-small) and (max-width: $breakpoint-medium) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-rows: repeat(3, 1fr);
+      & > .claim-preview--tile:nth-child(n + 13) {
+        display: none;
+      }
+    }
+    // + 1150
+    @media (min-width: $breakpoint-medium) and (max-width: $breakpoint-large) {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-rows: repeat(3, 1fr);
+      & > .claim-preview--tile:nth-child(n + 13) {
+        display: none;
+      }
+    }
+    // + 1600
+    @media (min-width: $breakpoint-large) {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      grid-template-rows: repeat(4, 1fr);
+      & > .claim-preview--tile:nth-child(n + 25) {
+        display: none;
+      }
+    }
+  }
 }
 
 .claim-grid__wrapper {
@@ -911,12 +1006,14 @@
 }
 
 .claim-preview--tile {
+  /*
   margin-bottom: var(--spacing-m);
   margin-right: 0;
   margin-top: 0;
   margin-left: var(--spacing-m);
   justify-content: flex-start;
   list-style: none;
+  */
 
   .media__thumb {
     overflow: hidden;
@@ -978,7 +1075,7 @@
 
   @media (min-width: $breakpoint-large) {
     $width: calc((100% - var(--spacing-m) * 5) / 6);
-    width: $width;
+    // width: $width;
     @include handleClaimTileGifThumbnail($width);
 
     &:first-child,
@@ -989,7 +1086,7 @@
 
   @media (max-width: $breakpoint-large) and (min-width: $breakpoint-medium) {
     $width: calc((100% - var(--spacing-m) * 3) / 4);
-    width: $width;
+    // width: $width;
     @include handleClaimTileGifThumbnail($width);
 
     &:first-child,
