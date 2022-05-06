@@ -92,7 +92,7 @@ function ClaimTilesDiscover(props: Props) {
     doFetchUserMemberships,
     doResolveClaimIds,
     doResolveUris,
-    rows,
+    rows = 0,
   } = props;
 
   const listRef = React.useRef();
@@ -210,7 +210,7 @@ function ClaimTilesDiscover(props: Props) {
     <div
       ref={listRef}
       style={{
-        gridTemplateRows: 'repeat(' + String(rows) + ', 1fr)',
+        gridTemplateRows: 'repeat(' + rows.toString() + ', 1fr)',
       }}
       className={classnames('claim-grid claim-grid-test', {
         // 'claim-grid-2-rows': rows === 2,

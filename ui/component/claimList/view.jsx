@@ -106,6 +106,7 @@ export default function ClaimList(props: Props) {
     inWatchHistory,
   } = props;
 
+  console.log('props: ', props);
   const [currentSort, setCurrentSort] = usePersistedState(persistedStorageKey, SORT_NEW);
   const [rows, setRows] = useState(6);
 
@@ -113,6 +114,8 @@ export default function ClaimList(props: Props) {
   const listRef = React.useRef();
   const findLastVisibleSlot = injectedItem && injectedItem.node && injectedItem.index === undefined;
   const lastVisibleIndex = useGetLastVisibleSlot(listRef, !findLastVisibleSlot);
+
+  console.log('injectedItem: ', injectedItem);
 
   // Exclude prefix uris in these results variables. We don't want to show
   // anything if the search failed or timed out.
@@ -232,11 +235,17 @@ export default function ClaimList(props: Props) {
   /* NEKO MARK */
   return tileLayout && !header ? (
     <>
-      <section ref={listRef} className={classnames('claim-grid claim-grid-4-rows', { 'swipe-list': swipeLayout })}>
+      <section
+        ref={listRef}
+        style={{
+          gridTemplateRows: 'repeat(' + rows.toString() + ', 1fr)',
+        }}
+        className={classnames('claim-grid', { 'swipe-list': swipeLayout })}
+      >
         {urisLength > 0 &&
           tileUris.map(
             (uri, index) =>
-              index < columns * rows && (
+              index < columns * rows - 1 && (
                 <React.Fragment key={uri}>
                   {getInjectedItem(index)}
                   <ClaimPreviewTile
