@@ -97,8 +97,10 @@ function resolvePublishPayload(publishData, myClaimForUri, myChannels, preview) 
   const channelId = namedChannelClaim ? namedChannelClaim.claim_id : '';
 
   const nowTimeStamp = Number(Math.round(Date.now() / 1000));
+  const { claim_id: claimId } = myClaimForUri;
 
   const publishPayload: {
+    claim_id?: string,
     name: ?string,
     bid: string,
     description?: string,
@@ -136,6 +138,10 @@ function resolvePublishPayload(publishData, myClaimForUri, myChannels, preview) 
   // `nsfw` will probably be removed
   if (remoteFileUrl) {
     publishPayload.remote_url = remoteFileUrl;
+  }
+
+  if (filePath !== '') {
+    publishPayload.claim_id = claimId;
   }
 
   if (publishingLicense) {

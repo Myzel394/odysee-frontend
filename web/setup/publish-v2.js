@@ -48,7 +48,7 @@ export function makeResumableUploadRequest(
       reject(new Error('Publish: v2 does not support remote_url'));
     }
 
-    const { uploadUrl, guid, ...sdkParams } = params;
+    const { uploadUrl, guid, claim_id: claimId, ...sdkParams } = params;
 
     const jsonPayload = JSON.stringify({
       jsonrpc: '2.0',
@@ -65,6 +65,9 @@ export function makeResumableUploadRequest(
     } else {
       // New upload, so use `endpoint`.
       urlOptions.endpoint = RESUMABLE_ENDPOINT;
+    }
+    if (claimId) {
+      urlOptions.claim_id = claimId;
     }
 
     const uploader = new tus.Upload(file, {

@@ -22,7 +22,7 @@ export function makeUploadRequest(
   file: File | string,
   isPreview?: boolean
 ) {
-  const { remote_url: remoteUrl } = params;
+  const { remote_url: remoteUrl, claim_id: claimId } = params;
 
   const body = new FormData();
 
@@ -32,6 +32,10 @@ export function makeUploadRequest(
   } else if (remoteUrl) {
     body.append('remote_url', remoteUrl);
     delete params['remote_url'];
+  }
+  if (claimId) {
+    body.append('claim_id', claimId);
+    delete params['claim_id'];
   }
 
   const { uploadUrl, guid, ...sdkParams } = params;
