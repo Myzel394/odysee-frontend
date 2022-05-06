@@ -834,6 +834,44 @@
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 
+  &.claim-grid-3-rows {
+    & > .claim-preview--tile:nth-child(n + 19) {
+      display: none;
+    }
+  }
+
+  &.claim-grid-6-rows {
+    & > .claim-preview--tile:nth-child(n + 37) {
+      display: none;
+    }
+  }
+
+  &.claim-grid-12-rows {
+    & > .claim-preview--tile:nth-child(n + 73) {
+      display: none;
+    }
+  }
+
+  &.claim-grid-18-rows {
+    & > .claim-preview--tile:nth-child(n + 109) {
+      display: none;
+    }
+  }
+
+  &.claim-grid-24-rows {
+    & > .claim-preview--tile:nth-child(n + 145) {
+      display: none;
+    }
+  }
+
+  &.claim-grid-30-rows {
+    & > .claim-preview--tile:nth-child(n + 181) {
+      display: none;
+    }
+  }
+
+  /* limit 150??? */
+
   /*
   &.claim-grid-2-rows {
     @media (max-width: $breakpoint-small) {

@@ -20,7 +20,7 @@ const DEBOUNCE_SCROLL_HANDLER_MS = 150;
 const SORT_NEW = 'new';
 const SORT_OLD = 'old';
 
-let columns = 6;
+// let columns = 6;
 
 type Props = {
   uris: Array<string>,
@@ -106,9 +106,11 @@ export default function ClaimList(props: Props) {
     inWatchHistory,
   } = props;
 
-  console.log('props: ', props);
+  // console.log('props: ', props);
   const [currentSort, setCurrentSort] = usePersistedState(persistedStorageKey, SORT_NEW);
   const [rows, setRows] = useState(6);
+
+  console.log('loading: ', loading);
 
   // Resolve the index for injectedItem, if provided; else injectedIndex will be 'undefined'.
   const listRef = React.useRef();
@@ -240,27 +242,24 @@ export default function ClaimList(props: Props) {
         style={{
           gridTemplateRows: 'repeat(' + rows.toString() + ', 1fr)',
         }}
-        className={classnames('claim-grid', { 'swipe-list': swipeLayout })}
+        className={classnames('claim-grid claim-grid-' + rows + '-rows', { 'swipe-list': swipeLayout })}
       >
         {urisLength > 0 &&
-          tileUris.map(
-            (uri, index) =>
-              index < columns * rows - 1 && (
-                <React.Fragment key={uri}>
-                  {getInjectedItem(index)}
-                  <ClaimPreviewTile
-                    uri={uri}
-                    showHiddenByUser={showHiddenByUser}
-                    showUnresolvedClaims={showUnresolvedClaims}
-                    properties={renderProperties}
-                    collectionId={collectionId}
-                    fypId={fypId}
-                    showNoSourceClaims={showNoSourceClaims}
-                    swipeLayout={swipeLayout}
-                  />
-                </React.Fragment>
-              )
-          )}
+          tileUris.map((uri, index) => (
+            <React.Fragment key={uri}>
+              {getInjectedItem(index)}
+              <ClaimPreviewTile
+                uri={uri}
+                showHiddenByUser={showHiddenByUser}
+                showUnresolvedClaims={showUnresolvedClaims}
+                properties={renderProperties}
+                collectionId={collectionId}
+                fypId={fypId}
+                showNoSourceClaims={showNoSourceClaims}
+                swipeLayout={swipeLayout}
+              />
+            </React.Fragment>
+          ))}
         {!timedOut && urisLength === 0 && !loading && !noEmpty && (
           <div className="empty main--empty">{empty || noResultMsg}</div>
         )}

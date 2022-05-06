@@ -8,7 +8,7 @@ import useFetchViewCount from 'effects/use-fetch-view-count';
 import useGetLastVisibleSlot from 'effects/use-get-last-visible-slot';
 import useResolvePins from 'effects/use-resolve-pins';
 import useGetUserMemberships from 'effects/use-get-user-memberships';
-import classnames from 'classnames';
+// import classnames from 'classnames';
 
 const SHOW_TIMEOUT_MSG = false;
 
@@ -109,6 +109,8 @@ function ClaimTilesDiscover(props: Props) {
 
   const uris = (prefixUris || []).concat(claimSearchUris);
   // if (prefixUris && prefixUris.length) uris.splice(prefixUris.length * -1, prefixUris.length);
+
+  // let columns = 6;
 
   if (window.location.pathname === '/') {
     injectPinUrls(uris, pins, resolvedPinUris);
@@ -212,11 +214,7 @@ function ClaimTilesDiscover(props: Props) {
       style={{
         gridTemplateRows: 'repeat(' + rows.toString() + ', 1fr)',
       }}
-      className={classnames('claim-grid claim-grid-test', {
-        // 'claim-grid-2-rows': rows === 2,
-        // 'claim-grid-test': rows === 2,
-        // 'claim-grid-3-rows': rows === 3,
-      })}
+      className="claim-grid claim-grid-3-rows"
     >
       {finalUris && finalUris.length
         ? finalUris.map((uri, i) => {
