@@ -75,7 +75,9 @@ type Props = {
   doSendTip: (params: {}, isSupport: boolean, successCb: (any) => void, errorCb: (any) => void, boolean) => void,
   doOpenModal: (id: string, any) => void,
   preferredCurrency: string,
-  myCommentedChannelIds?: Array<string>,
+  myChannelClaimIds: ?Array<string>,
+  myCommentedChannelIds: ?Array<string>,
+  doFetchMyCommentedChannels: (claimId: ?string) => void,
 };
 
 export function CommentCreate(props: Props) {
@@ -112,7 +114,9 @@ export function CommentCreate(props: Props) {
     setQuickReply,
     doOpenModal,
     preferredCurrency,
+    myChannelClaimIds,
     myCommentedChannelIds,
+    doFetchMyCommentedChannels,
   } = props;
 
   const isMobile = useIsMobile();
@@ -488,6 +492,13 @@ export function CommentCreate(props: Props) {
     };
   }, [isLivestream]);
 
+  // Determine my channels that have commented
+  React.useEffect(() => {
+    if (myCommentedChannelIds === undefined && claimId && myChannelClaimIds) {
+      doFetchMyCommentedChannels(claimId);
+    }
+  }, [claimId, myCommentedChannelIds, myChannelClaimIds]);
+
   // **************************************************************************
   // Render
   // **************************************************************************
@@ -591,17 +602,7 @@ export function CommentCreate(props: Props) {
             className={isReply ? 'create__reply' : 'create__comment'}
             disabled={isFetchingChannels || disableInput}
             isLivestream={isLivestream}
-            label={
-              <FormChannelSelector
-                isReply={Boolean(isReply)}
-                isLivestream={Boolean(isLivestream)}
-                channelIds={
-                  !claimIsMine && myCommentedChannelIds && myCommentedChannelIds.length > 0
-                    ? myCommentedChannelIds
-                    : undefined
-                }
-              />
-            }
+            label={<FormChannelSelector isReply={Boolean(isReply)} isLivestream={Boolean(isLivestream)} />}
             noticeLabel={
               isMobile && (
                 <HelpText deletedComment={deletedComment} minAmount={minAmount} minSuper={minSuper} minTip={minTip} />

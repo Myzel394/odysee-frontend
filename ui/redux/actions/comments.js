@@ -7,7 +7,7 @@ import Lbry from 'lbry';
 import { resolveApiMessage } from 'util/api-message';
 import { parseURI, buildURI, isURIEqual } from 'util/lbryURI';
 import { devToast, dispatchToast, doFailedSignatureToast } from 'util/toast-wrappers';
-import { selectClaimForUri, selectClaimsByUri, selectMyChannelClaims } from 'redux/selectors/claims';
+import { selectClaimForUri, selectClaimsById, selectClaimsByUri, selectMyChannelClaims } from 'redux/selectors/claims';
 import { doResolveUris, doClaimSearch, doResolveClaimIds } from 'redux/actions/claims';
 import { doToast, doSeeNotifications } from 'redux/actions/notifications';
 import {
@@ -16,6 +16,7 @@ import {
   selectPendingCommentReacts,
   selectModerationBlockList,
   selectModerationDelegatorsById,
+  selectMyCommentedChannelIdsForId,
 } from 'redux/selectors/comments';
 import { makeSelectNotificationForCommentId } from 'redux/selectors/notifications';
 import { selectActiveChannelClaim } from 'redux/selectors/app';
@@ -283,11 +284,16 @@ export function doFetchMyCommentedChannels(claimId: ?string) {
       // $FlowFixMe
       return Promise.allSettled(params.map((p) => Comments.comment_list(p)))
         .then((response) => {
-          response.forEach((res, i) => {
-            if (res.status === 'fulfilled' && res.value.total_items > 0) {
+          for (let i = 0; i < response.length; ++i) {
+            if (response[i].status !== 'fulfilled') {
+              // Meaningless if it couldn't confirm history for all own channels.
+              return;
+            }
+
+            if (response[i].value.total_items > 0) {
               commentedChannelIds.push(params[i].author_claim_id);
             }
-          });
+          }
 
           dispatch({
             type: ACTIONS.COMMENT_FETCH_MY_COMMENTED_CHANNELS_COMPLETE,
@@ -620,11 +626,37 @@ export function doCommentCreate(uri: string, livestream: boolean, params: Commen
 
     const state = getState();
     const activeChannelClaim = selectActiveChannelClaim(state);
+    const myCommentedChannelIds = selectMyCommentedChannelIdsForId(state, claim_id);
     const mentionedChannels: Array<MentionedChannel> = [];
 
     if (!activeChannelClaim) {
       console.error('Unable to create comment. No activeChannel is set.'); // eslint-disable-line
       return;
+    }
+
+    if (myCommentedChannelIds === undefined) {
+      dispatchToast(
+        dispatch,
+        __('Failed to perform action.'),
+        __('Please wait a while before re-submitting, or try refreshing the page.'),
+        'long'
+      );
+      return;
+    }
+
+    if (myCommentedChannelIds && myCommentedChannelIds.length) {
+      if (!myCommentedChannelIds.includes(activeChannelClaim.claim_id)) {
+        const claimById = selectClaimsById(state);
+        const commentedChannelNames = myCommentedChannelIds.map((id) => claimById[id]?.name);
+
+        dispatchToast(
+          dispatch,
+          __('Commenting from multiple channels is not allowed.'),
+          commentedChannelNames.join(' • '),
+          'long'
+        );
+        return;
+      }
     }
 
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/matchAll
@@ -807,6 +839,9 @@ export function doCommentAbandon(
               comment_id: commentId,
             },
           });
+
+          // Update the commented-channels list.
+          dispatch(doFetchMyCommentedChannels(result.claim_id));
         } else {
           dispatch({
             type: ACTIONS.COMMENT_ABANDON_FAILED,
