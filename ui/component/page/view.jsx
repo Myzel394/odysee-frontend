@@ -38,6 +38,7 @@ type Props = {
   renderMode: String,
   videoTheaterMode: boolean,
   isPopoutWindow?: boolean,
+  isOnFilePage?: boolean,
 };
 
 function Page(props: Props) {
@@ -72,13 +73,16 @@ function Page(props: Props) {
   const [sidebarOpen, setSidebarOpen] = usePersistedState('sidebar', false);
 
   const url = pathname.slice(1).replace(/:/g, '#');
-  let isOnFilePage = false;
-  try {
-    const url = pathname.slice(1).replace(/:/g, '#');
-    const { isChannel } = parseURI(url);
 
-    if (!isChannel) isOnFilePage = true;
-  } catch (e) {}
+  let isOnFilePage = props.isOnFilePage;
+  if (!isOnFilePage) {
+    try {
+      const url = pathname.slice(1).replace(/:/g, '#');
+      const { isChannel } = parseURI(url);
+
+      if (!isChannel) isOnFilePage = true;
+    } catch (e) {}
+  }
 
   const isAbsoluteSideNavHidden = (isOnFilePage || isMobile) && !sidebarOpen;
 

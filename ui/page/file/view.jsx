@@ -219,7 +219,7 @@ export default function FilePage(props: Props) {
   const emptyMsgProps = { padded: !isMobile };
 
   return (
-    <Page className="file-page" filePage isMarkdown={isMarkdown}>
+    <Page className="file-page" filePage isOnFilePage isMarkdown={isMarkdown}>
       <div className={classnames('section card-stack', `file-page__${renderMode}`)}>
         {renderFilePageLayout()}
 
