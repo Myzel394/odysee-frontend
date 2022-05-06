@@ -212,7 +212,17 @@ function DiscoverPage(props: Props) {
           tags={tags}
           hiddenNsfwMessage={<HiddenNsfw type="page" />}
           repostedClaimId={repostedClaim ? repostedClaim.claim_id : null}
-          injectedItem={!isWildWest && { node: <Ads small type="video" tileLayout={tileLayout} /> }}
+          injectedItem={
+            !isWildWest && {
+              node: (index, lastVisibleIndex, pageSize) => {
+                if (pageSize && index < pageSize) {
+                  return index === lastVisibleIndex ? <Ads small type="video" tileLayout={tileLayout} /> : null;
+                } else {
+                  return index % (pageSize * 2) === 0 ? <Ads small type="video" tileLayout={tileLayout} /> : null;
+                }
+              },
+            }
+          }
           // Assume wild west page if no dynamicRouteProps
           // Not a very good solution, but just doing it for now
           // until we are sure this page will stay around
