@@ -32,6 +32,8 @@ import LANGUAGE_MIGRATIONS from 'constants/language-migrations';
 import { useIsMobile } from 'effects/use-screensize';
 import getLanguagesForCountry from 'constants/country_languages';
 import SUPPORTED_LANGUAGES from 'constants/supported_languages';
+import { formatLbryUrlForWeb } from 'util/url';
+import { Redirect } from 'react-router-dom';
 
 const FileDrop = lazyImport(() => import('component/fileDrop' /* webpackChunkName: "fileDrop" */));
 const NagContinueFirstRun = lazyImport(() => import('component/nagContinueFirstRun' /* webpackChunkName: "nagCFR" */));
@@ -53,6 +55,7 @@ const oneTrustScriptSrc = 'https://cdn.cookielaw.org/scripttemplates/otSDKStub.j
 
 type Props = {
   uri: string,
+  claimId: ?string,
   language: string,
   languages: Array<string>,
   theme: string,
@@ -82,11 +85,20 @@ type Props = {
   fetchModBlockedList: () => void,
   fetchModAmIList: () => void,
   homepageFetched: boolean,
+  latestContentPath: boolean,
+  liveContentPath: boolean,
+  isNewestPath: boolean,
+  latestClaimUrl: ?string,
+  canonicalUrl: ?string,
+  doResolveUri: (uri: string) => void,
+  fetchLatestClaimForChannel: (uri: string) => void,
+  fetchChannelLiveStatus: (channelId: string) => void,
 };
 
 function App(props: Props) {
   const {
     uri,
+    claimId,
     theme,
     user,
     locale,
@@ -115,6 +127,14 @@ function App(props: Props) {
     hasPremiumPlus,
     fetchModAmIList,
     homepageFetched,
+    isNewestPath,
+    latestContentPath,
+    liveContentPath,
+    latestClaimUrl,
+    canonicalUrl,
+    doResolveUri,
+    fetchLatestClaimForChannel,
+    fetchChannelLiveStatus,
   } = props;
 
   const isMobile = useIsMobile();
@@ -192,6 +212,26 @@ function App(props: Props) {
       return <NagLocaleSwitch localeLangs={localeLangs} noLanguageSet={noLanguageSet} onFrontPage={pathname === '/'} />;
     }
   }
+
+  useEffect(() => {
+    if (!canonicalUrl && isNewestPath) {
+      doResolveUri(uri);
+    }
+    // only for mount on a latest content page
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!latestClaimUrl && liveContentPath && claimId) {
+      fetchChannelLiveStatus(claimId);
+    }
+  }, [claimId, fetchChannelLiveStatus, latestClaimUrl, liveContentPath]);
+
+  useEffect(() => {
+    if (!latestClaimUrl && latestContentPath && canonicalUrl) {
+      fetchLatestClaimForChannel(canonicalUrl);
+    }
+  }, [canonicalUrl, fetchLatestClaimForChannel, latestClaimUrl, latestContentPath]);
 
   useEffect(() => {
     if (userId) {
@@ -446,12 +486,17 @@ function App(props: Props) {
   // Require an internal-api user on lbry.tv
   // This also prevents the site from loading in the un-authed state while we wait for internal-apis to return for the first time
   // It's not needed on desktop since there is no un-authed state
-  if (user === undefined) {
+  // Also wait for latest claim fetch, otherwise will end up in a broken page and get redirected
+  if (user === undefined || (isNewestPath && !latestClaimUrl)) {
     return (
       <div className="main--empty">
         <Spinner delayed />
       </div>
     );
+  }
+
+  if (latestClaimUrl && isNewestPath) {
+    return <Redirect to={formatLbryUrlForWeb(latestClaimUrl)} />;
   }
 
   if (connectionStatus.online && lbryTvApiStatus === STATUS_DOWN) {
