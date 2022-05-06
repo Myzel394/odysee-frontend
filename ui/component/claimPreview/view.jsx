@@ -117,19 +117,15 @@ const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
     claimIsMine,
     streamingUrl,
     mediaDuration,
-    // user properties
     hasVisitedUri,
-    // component
     history,
     wrapperElement,
     type,
     nonClickable,
     placeholder,
-    // pending
     reflectingProgress,
     pending,
     empty,
-    // modifiers
     active,
     customShouldHide,
     searchParams,
@@ -148,7 +144,6 @@ const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
     includeSupportAction,
     renderActions,
     hideMenu = false,
-    // repostUrl,
     isLivestream,
     isLivestreamActive,
     livestreamViewerCount,

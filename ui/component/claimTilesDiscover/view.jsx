@@ -203,6 +203,7 @@ function ClaimTilesDiscover(props: Props) {
     );
   }
 
+  /* NEKO MARK */
   console.log('Width: ', window.innerWidth);
   console.log('rows: ', rows);
   return (

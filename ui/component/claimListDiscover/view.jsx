@@ -730,7 +730,7 @@ function ClaimListDiscover(props: Props) {
             swipeLayout={swipeLayout}
           />
           {loading && useSkeletonScreen && (
-            <div className="claim-grid claim-grid-3-rows">
+            <div className="claim-grid claim-grid-2-rows">
               {new Array(dynamicPageSize).fill(1).map((x, i) => (
                 <ClaimPreviewTile key={i} placeholder="loading" />
               ))}

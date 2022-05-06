@@ -1,7 +1,7 @@
 // @flow
 import { MAIN_CLASS } from 'constants/classnames';
 import type { Node } from 'react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import ClaimPreview from 'component/claimPreview';
 import Spinner from 'component/spinner';
@@ -20,13 +20,15 @@ const DEBOUNCE_SCROLL_HANDLER_MS = 150;
 const SORT_NEW = 'new';
 const SORT_OLD = 'old';
 
+let columns = 6;
+
 type Props = {
   uris: Array<string>,
   prefixUris?: Array<string>,
   header: Node | boolean,
   headerAltControls: Node,
   loading: boolean,
-  useLoadingSpinner?: boolean, // use built-in spinner when 'loading' is true. Else, roll your own at client-side.
+  useLoadingSpinner?: boolean,
   type: string,
   activeUri?: string,
   empty?: string,
@@ -105,6 +107,7 @@ export default function ClaimList(props: Props) {
   } = props;
 
   const [currentSort, setCurrentSort] = usePersistedState(persistedStorageKey, SORT_NEW);
+  const [rows, setRows] = useState(6);
 
   // Resolve the index for injectedItem, if provided; else injectedIndex will be 'undefined'.
   const listRef = React.useRef();
@@ -115,22 +118,16 @@ export default function ClaimList(props: Props) {
   // anything if the search failed or timed out.
   const timedOut = uris === null;
   const urisLength = (uris && uris.length) || 0;
-  // console.log('urisLength: ', urisLength)
 
   let tileUris = (prefixUris || []).concat(uris || []);
 
   if (prefixUris && prefixUris.length) tileUris.splice(prefixUris.length * -1, prefixUris.length);
 
   const totalLength = tileUris.length;
-  // console.log('totalLength: ', totalLength)
 
   if (maxClaimRender) tileUris = tileUris.slice(0, maxClaimRender);
-  if (maxClaimRender) console.log('maxClaimRender: ', maxClaimRender);
 
   const sortedUris = (urisLength > 0 && (currentSort === SORT_NEW ? tileUris : tileUris.slice().reverse())) || [];
-  // console.log('sortedUris: ', sortedUris.length)
-
-  if (pageSize) console.log('pageSize: ', pageSize);
 
   React.useEffect(() => {
     if (typeof loadedCallback === 'function') loadedCallback(totalLength);
@@ -176,6 +173,8 @@ export default function ClaimList(props: Props) {
           const contentWrapperAtBottomOfPage = mainBoundingRect.bottom - ROUGH_TILE_HEIGHT_PX <= window.innerHeight;
           if (contentWrapperAtBottomOfPage) {
             onScrollBottom();
+            console.log('Scroll to bottom');
+            setRows(rows + 6);
           }
         }
       }
@@ -230,25 +229,29 @@ export default function ClaimList(props: Props) {
     return null;
   };
 
+  /* NEKO MARK */
   return tileLayout && !header ? (
     <>
       <section ref={listRef} className={classnames('claim-grid claim-grid-4-rows', { 'swipe-list': swipeLayout })}>
         {urisLength > 0 &&
-          tileUris.map((uri, index) => (
-            <React.Fragment key={uri}>
-              {getInjectedItem(index)}
-              <ClaimPreviewTile
-                uri={uri}
-                showHiddenByUser={showHiddenByUser}
-                showUnresolvedClaims={showUnresolvedClaims}
-                properties={renderProperties}
-                collectionId={collectionId}
-                fypId={fypId}
-                showNoSourceClaims={showNoSourceClaims}
-                swipeLayout={swipeLayout}
-              />
-            </React.Fragment>
-          ))}
+          tileUris.map(
+            (uri, index) =>
+              index < columns * rows && (
+                <React.Fragment key={uri}>
+                  {getInjectedItem(index)}
+                  <ClaimPreviewTile
+                    uri={uri}
+                    showHiddenByUser={showHiddenByUser}
+                    showUnresolvedClaims={showUnresolvedClaims}
+                    properties={renderProperties}
+                    collectionId={collectionId}
+                    fypId={fypId}
+                    showNoSourceClaims={showNoSourceClaims}
+                    swipeLayout={swipeLayout}
+                  />
+                </React.Fragment>
+              )
+          )}
         {!timedOut && urisLength === 0 && !loading && !noEmpty && (
           <div className="empty main--empty">{empty || noResultMsg}</div>
         )}

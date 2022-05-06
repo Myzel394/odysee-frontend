@@ -811,6 +811,7 @@
 }
 */
 
+/* NEKO MARK */
 .claim-grid {
   display: grid;
   column-gap: 10px;
@@ -820,6 +821,20 @@
     display: none;
   }
 
+  @media (max-width: $breakpoint-small) {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  @media (min-width: $breakpoint-small) and (max-width: $breakpoint-medium) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  @media (min-width: $breakpoint-medium) and (max-width: $breakpoint-large) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  @media (min-width: $breakpoint-large) {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  /*
   &.claim-grid-2-rows {
     @media (max-width: $breakpoint-small) {
     }
@@ -906,18 +921,7 @@
       }
     }
   }
-
-  &.claim-grid-test {
-    @media (min-width: $breakpoint-small) and (max-width: $breakpoint-medium) {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-    @media (min-width: $breakpoint-medium) and (max-width: $breakpoint-large) {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-    @media (min-width: $breakpoint-large) {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-    }
-  }
+  */
 }
 
 .claim-grid__wrapper {
