@@ -6,6 +6,8 @@ import I18nMessage from 'component/i18nMessage';
 import Button from 'component/button';
 import classnames from 'classnames';
 import { platform } from 'util/platform';
+import Icon from 'component/common/icon';
+import * as ICONS from 'constants/icons';
 
 // prettier-ignore
 const AD_CONFIGS = Object.freeze({
@@ -124,7 +126,19 @@ function Ads(props: Props) {
         ),
       }}
     >
-      Hate these? %sign_up_for_premium% for an ad free experience.
+      {__('Hate these?')}
+    </I18nMessage>
+  );
+
+  const adsSignInDriverSub = (
+    <I18nMessage
+      tokens={{
+        sign_up_for_premium: (
+          <Button button="link" label={__('Get Odysee Premium+')} navigate={`/$/${PAGES.ODYSEE_MEMBERSHIP}`} />
+        ),
+      }}
+    >
+      %sign_up_for_premium% for an ad free experience.
     </I18nMessage>
   );
 
@@ -143,8 +157,16 @@ function Ads(props: Props) {
             'ads__claim-text--small': small,
           })}
         >
-          <div>Ad</div>
-          <p>{adsSignInDriver}</p>
+          <div className="ads__title">
+            {__('Ad')}
+            <br />
+            {adsSignInDriver}
+          </div>
+          <div className="ads__subtitle">
+            <Icon icon={ICONS.UPGRADE} />
+
+            {adsSignInDriverSub}
+          </div>
         </div>
       </div>
     );

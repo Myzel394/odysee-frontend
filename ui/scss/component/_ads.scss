@@ -106,7 +106,25 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    color: var(--color-text);
+
+    .ads__title {
+      color: var(--color-text);
+    }
+
+    .ads__subtitle {
+      margin-top: var(--spacing-s);
+      color: rgba(var(--color-text-base), 0.6);
+      font-weight: var(--font-weight-bold);
+      line-height: 1rem;
+
+      .icon {
+        color: var(--color-text);
+        width: 2.1rem;
+        height: 2.1rem;
+        float: left;
+        margin-right: var(--spacing-s);
+      }
+    }
   }
 
   .ad__container {

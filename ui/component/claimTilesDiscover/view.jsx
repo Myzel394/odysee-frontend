@@ -208,9 +208,13 @@ function ClaimTilesDiscover(props: Props) {
   return (
     <div
       ref={listRef}
-      className={classnames('claim-grid', {
-        'claim-grid-2-rows': rows === 2,
-        'claim-grid-3-rows': rows === 3,
+      style={{
+        gridTemplateRows: 'repeat(' + String(rows) + ', 1fr)',
+      }}
+      className={classnames('claim-grid claim-grid-test', {
+        // 'claim-grid-2-rows': rows === 2,
+        // 'claim-grid-test': rows === 2,
+        // 'claim-grid-3-rows': rows === 3,
       })}
     >
       {finalUris && finalUris.length
@@ -225,6 +229,7 @@ function ClaimTilesDiscover(props: Props) {
                       showNoSourceClaims={hasNoSource || showNoSourceClaims}
                       uri={uri}
                       properties={renderProperties}
+                      index={i}
                     />
                   )}
                 </React.Fragment>

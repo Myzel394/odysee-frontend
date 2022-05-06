@@ -816,6 +816,10 @@
   column-gap: 10px;
   row-gap: 10px;
 
+  .claim-preview--tile-hidden {
+    display: none;
+  }
+
   &.claim-grid-2-rows {
     @media (max-width: $breakpoint-small) {
     }
@@ -900,6 +904,18 @@
       & > .claim-preview--tile:nth-child(n + 25) {
         display: none;
       }
+    }
+  }
+
+  &.claim-grid-test {
+    @media (min-width: $breakpoint-small) and (max-width: $breakpoint-medium) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    @media (min-width: $breakpoint-medium) and (max-width: $breakpoint-large) {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    @media (min-width: $breakpoint-large) {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
     }
   }
 }
