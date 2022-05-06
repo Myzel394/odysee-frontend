@@ -93,4 +93,4 @@ exports.LIST = 'list';
 exports.ODYSEE_MEMBERSHIP = 'membership';
 exports.POPOUT = 'popout';
 exports.LATEST = 'latest';
-exports.LIVE = 'live';
+exports.LIVE_NOW = 'livenow';

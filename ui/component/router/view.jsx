@@ -136,6 +136,7 @@ type Props = {
   hideTitleNotificationCount: boolean,
   hasDefaultChannel: boolean,
   doSetActiveChannel: (claimId: ?string, override?: boolean) => void,
+  embedRoute: ?boolean,
 };
 
 type PrivateRouteProps = Props & {
@@ -179,6 +180,7 @@ function AppRouter(props: Props) {
     hideTitleNotificationCount,
     hasDefaultChannel,
     doSetActiveChannel,
+    embedRoute,
   } = props;
 
   const defaultChannelRef = React.useRef(hasDefaultChannel);
@@ -189,7 +191,6 @@ function AppRouter(props: Props) {
   const resetScroll = urlParams.get('reset_scroll');
   const hasLinkedCommentInUrl = urlParams.get(LINKED_COMMENT_QUERY_PARAM);
   const tagParams = urlParams.get(CS.TAGS_KEY);
-  const featureParam = urlParams.get('feature');
   const isLargeScreen = useIsLargeScreen();
 
   const categoryPages = React.useMemo(() => {
@@ -393,7 +394,11 @@ function AppRouter(props: Props) {
 
         <Route path={`/$/${PAGES.POPOUT}/:channelName/:streamName`} component={PopoutChatPage} />
 
-        <Route path={`/$/${PAGES.EMBED}/:claimName`} exact component={EmbedWrapperPage} />
+        <Route
+          path={`/$/${PAGES.EMBED}/:claimName`}
+          exact
+          component={() => <EmbedWrapperPage uri={embedRoute ? uri : undefined} />}
+        />
         <Route path={`/$/${PAGES.EMBED}/:claimName/:claimId`} exact component={EmbedWrapperPage} />
 
         {/* Below need to go at the end to make sure we don't match any of our pages first */}

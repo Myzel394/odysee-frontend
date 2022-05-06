@@ -25,26 +25,30 @@ import { doSetLanguage } from 'redux/actions/settings';
 import { doSyncLoop } from 'redux/actions/sync';
 import { doSignIn, doSetIncognito } from 'redux/actions/app';
 import { doFetchModBlockedList, doFetchCommentModAmIList } from 'redux/actions/comments';
-import { selectActiveLivestreamForChannel } from 'redux/selectors/livestream';
+import { selectActiveLiveClaimForChannel } from 'redux/selectors/livestream';
 import { doFetchChannelLiveStatus } from 'redux/actions/livestream';
 import { normalizeURI } from 'util/lbryURI';
 import { generateGoogleCacheUrl } from 'util/url';
 import App from './view';
 
 const LATEST_PATH = `/$/${PAGES.LATEST}/`;
-const LIVE_PATH = `/$/${PAGES.LIVE}/`;
+const LIVE_PATH = `/$/${PAGES.LIVE_NOW}/`;
+const EMBED_PATH = `/$/${PAGES.EMBED}/`;
 
 const select = (state, props) => {
   const { pathname, hash, search } = state.router.location;
 
   const urlPath = pathname + hash;
-  const latestContentPath = urlPath.startsWith(LATEST_PATH);
-  const liveContentPath = urlPath.startsWith(LIVE_PATH);
+  const embedPath = urlPath.startsWith(EMBED_PATH);
+  const urlParams = new URLSearchParams(search);
+  const featureParam = urlParams.get('feature');
+  const latestContentPath = urlPath.startsWith(LATEST_PATH) || (embedPath && featureParam === PAGES.LATEST);
+  const liveContentPath = urlPath.startsWith(LIVE_PATH) || (embedPath && featureParam === PAGES.LIVE_NOW);
   const isNewestPath = latestContentPath || liveContentPath;
 
   let path;
   if (isNewestPath) {
-    path = urlPath.replace(latestContentPath ? LATEST_PATH : LIVE_PATH, '');
+    path = urlPath.replace(embedPath ? EMBED_PATH : latestContentPath ? LATEST_PATH : LIVE_PATH, '');
   } else {
     // Remove the leading "/" added by the browser
     path = urlPath.slice(1);
@@ -72,9 +76,10 @@ const select = (state, props) => {
 
   const claim = selectClaimForUri(state, uri);
   const { canonical_url: canonicalUrl, claim_id: claimId } = claim || {};
-  const latestContentClaim =
-    selectActiveLivestreamForChannel(state, claimId) || selectLatestClaimByUri(state, canonicalUrl);
-  const latestClaimUrl = latestContentClaim?.canonical_url || latestContentClaim?.claimUri;
+  const latestContentClaim = liveContentPath
+    ? selectActiveLiveClaimForChannel(state, claimId)
+    : selectLatestClaimByUri(state, canonicalUrl);
+  const latestClaimUrl = latestContentClaim && latestContentClaim.canonical_url;
 
   return {
     uri,

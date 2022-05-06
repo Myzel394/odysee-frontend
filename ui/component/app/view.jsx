@@ -169,6 +169,7 @@ function App(props: Props) {
   const hasActiveChannelClaim = activeChannelClaim !== undefined;
   const renderFiledrop = !isMobile && isAuthenticated;
   const connectionStatus = useConnectionStatus();
+  const isEmbedLatest = isNewestPath && embedPath;
 
   function getStatusNag() {
     // Handle "offline" first. Everything else is meaningless if it's offline.
@@ -487,7 +488,7 @@ function App(props: Props) {
   // This also prevents the site from loading in the un-authed state while we wait for internal-apis to return for the first time
   // It's not needed on desktop since there is no un-authed state
   // Also wait for latest claim fetch, otherwise will end up in a broken page and get redirected
-  if (user === undefined || (isNewestPath && !latestClaimUrl)) {
+  if (user === undefined || (isNewestPath && latestClaimUrl === undefined)) {
     return (
       <div className="main--empty">
         <Spinner delayed />
@@ -495,8 +496,9 @@ function App(props: Props) {
     );
   }
 
-  if (latestClaimUrl && isNewestPath) {
-    return <Redirect to={formatLbryUrlForWeb(latestClaimUrl)} />;
+  if (latestClaimUrl && isNewestPath && !embedPath) {
+    const params = urlParams.toString() !== '' ? `?${urlParams.toString()}` : '';
+    return <Redirect to={`${formatLbryUrlForWeb(latestClaimUrl)}${params}`} />;
   }
 
   if (connectionStatus.online && lbryTvApiStatus === STATUS_DOWN) {
@@ -518,7 +520,7 @@ function App(props: Props) {
         />
       ) : (
         <React.Fragment>
-          <Router uri={uri} />
+          <Router uri={isEmbedLatest ? latestClaimUrl : uri} embedRoute={isEmbedLatest} />
           <ModalRouter />
 
           <React.Suspense fallback={null}>{renderFiledrop && <FileDrop />}</React.Suspense>

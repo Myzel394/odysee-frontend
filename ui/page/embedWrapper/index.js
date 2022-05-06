@@ -15,9 +15,9 @@ import { doUserSetReferrerWithUri } from 'redux/actions/user';
 
 const select = (state, props) => {
   const { match } = props;
-  const { params } = match;
-  const { claimName, claimId } = params;
-  const uri = claimName ? buildURI({ claimName, claimId }) : '';
+  const { params } = match || {};
+  const { claimName, claimId } = params || {};
+  const uri = props.uri || (claimName ? buildURI({ claimName, claimId }) : '');
 
   const claim = selectClaimForUri(state, uri);
   const { canonical_url: canonicalUrl, signing_channel: channelClaim, txid, nout } = claim || {};
