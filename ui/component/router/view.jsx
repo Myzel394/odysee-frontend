@@ -154,6 +154,7 @@ function PrivateRoute(props: PrivateRouteProps) {
   const { component: Component, isAuthenticated, ...rest } = props;
   const urlSearchParams = new URLSearchParams(props.location.search);
   const redirectUrl = urlSearchParams.get('redirect');
+
   return (
     <Route
       {...rest}
@@ -161,7 +162,7 @@ function PrivateRoute(props: PrivateRouteProps) {
         isAuthenticated || !IS_WEB ? (
           <Component {...props} />
         ) : (
-          <Redirect to={`/$/${PAGES.AUTH}?redirect=${redirectUrl || props.location.pathname}`} />
+          <Redirect to={`/$/${PAGES.AUTH_SIGNIN}?redirect=${redirectUrl || props.location.pathname}`} />
         )
       }
     />
@@ -322,6 +323,7 @@ function AppRouter(props: Props) {
         {categoryPages}
 
         <Route path={`/$/${PAGES.AUTH_SIGNIN}`} exact component={SignInPage} />
+        <Route path={`/$/${PAGES.AUTH_SIGNIN}/*`} exact component={SignInPage} />
         <Route path={`/$/${PAGES.AUTH_PASSWORD_RESET}`} exact component={PasswordResetPage} />
         <Route path={`/$/${PAGES.AUTH_PASSWORD_SET}`} exact component={PasswordSetPage} />
         <Route path={`/$/${PAGES.AUTH}`} exact component={SignUpPage} />
